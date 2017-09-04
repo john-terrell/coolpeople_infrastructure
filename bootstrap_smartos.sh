@@ -21,3 +21,5 @@ tar -zxpf ${BOOTSTRAP_TAR} -C /
 # Add to PATH/MANPATH.
 PATH=/opt/local/sbin:/opt/local/bin:$PATH
 MANPATH=/opt/local/man:$MANPATH
+
+pkgin in python35
