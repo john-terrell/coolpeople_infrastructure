@@ -1,6 +1,4 @@
 #
-# Copy and paste the lines below to install the 64-bit set.
-#
 BOOTSTRAP_TAR="bootstrap-2017Q2-x86_64.tar.gz"
 BOOTSTRAP_SHA="76395983001441108c3ca3ed77d6e071387cc2f5"
 
@@ -23,3 +21,5 @@ PATH=/opt/local/sbin:/opt/local/bin:$PATH
 MANPATH=/opt/local/man:$MANPATH
 
 pkgin in python35
+
+popd
