@@ -1,4 +1,4 @@
-pushd /opt/local/
+pushd /opt/
 
 #
 BOOTSTRAP_TAR="bootstrap-2017Q2-x86_64.tar.gz"
