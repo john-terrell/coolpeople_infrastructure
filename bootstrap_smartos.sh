@@ -1,3 +1,5 @@
+pushd /opt/local/
+
 #
 BOOTSTRAP_TAR="bootstrap-2017Q2-x86_64.tar.gz"
 BOOTSTRAP_SHA="76395983001441108c3ca3ed77d6e071387cc2f5"
