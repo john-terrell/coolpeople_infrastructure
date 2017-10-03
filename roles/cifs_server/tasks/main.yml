@@ -1,0 +1,6 @@
+---
+- name: Install CIFS kernel driver
+  package: name=system/file-system/smb state=installed
+- name: Install CIFS service
+  package: name=service/file-system/smb state=installed
+
