@@ -4,7 +4,7 @@
   environment:
     PATH: "{{ ansible_env.PATH }}:/opt/tools/sbin:/opt/tools/bin"
   tasks:
-   - cron:
+    - cron:
        name: "Scrub zones twice a month"
        minute: "0"
        hour: "3"
@@ -14,10 +14,24 @@
 ##########################
 - hosts: omnios
   tasks:
-   - package:
-       name: rsync
-       state: installed
+    - package:
+        name: rsync
+        state: installed
 
 - hosts: nas.internal.coolpeople.us
   roles:
     - cifs_server
+  tasks:
+    - debug:
+        msg: "{{ item.name }}"
+      with_items: "{{ host_groups_present }}"
+
+    - group:
+        name: "{{ item.name }}"
+        state: present
+      with_items: "{{ host_groups_present }}"
+
+    - group:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ host_groups_absent }}"

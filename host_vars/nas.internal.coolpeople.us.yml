@@ -1,0 +1,12 @@
+---
+host_groups_present: 
+  - name: users
+
+host_groups_absent: 
+  - name: ansiblegroup
+
+host_users_present:
+  - name: john
+
+host_users_absent:
+  - name: unused
