@@ -1,6 +1,0 @@
-[smartos]
-nas01.internal.coolpeople.us ansible_python_interpreter="/opt/tools/bin/python2" ansible_user=root
-
-[omnios]
-nas.internal.coolpeople.us ansible_user=root
-corti.kicks-ass.net ansible_port=2222 ansible_user=root

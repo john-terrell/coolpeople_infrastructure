@@ -10,3 +10,14 @@ host_users_present:
 
 host_users_absent:
   - name: unused
+
+zfs_filesystems:
+  - name: tank/test1
+    state: present
+    sharesmb: name=Test1
+    casesensitivity: insensitive
+  - name: tank/test2
+    state: present
+    sharesmb: name=Test2
+    casesensitivity: insensitive
+    

@@ -1,0 +1,6 @@
+[smartos]
+node01.internal.coolpeople.us
+
+[smartos:vars]
+ansible_python_interpreter="/opt/local/bin/python"
+ansible_user=root

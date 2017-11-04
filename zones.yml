@@ -1,0 +1,38 @@
+---
+- hosts: plexhosts
+  tasks:
+  - name: Install Plex APT Repository
+    apt_repository:
+      repo: deb https://downloads.plex.tv/repo/deb ./public main
+      state: present
+
+  - name: Install Plex APT Key
+    apt_key:
+      url: https://downloads.plex.tv/plex-keys/PlexSign.key
+      state: present
+
+  - name: Install Plex
+    apt:
+      name: plexmediaserver
+      state: present
+
+##########################
+#- hosts: all
+#  tasks:
+#    - package:
+#        name: rsync
+#        state: installed
+
+#- hosts: nas.internal.coolpeople.us
+#  roles:
+#    - cifs_server
+#  tasks:
+#    - group:
+#        name: "{{ item.name }}"
+#        state: present
+#      with_items: "{{ host_groups_present }}"
+
+#    - group:
+#        name: "{{ item.name }}"
+#        state: absent
+#      with_items: "{{ host_groups_absent }}"
