@@ -1,0 +1,15 @@
+---
+- name: Install Plex APT Repository
+  apt_repository:
+    repo: deb https://downloads.plex.tv/repo/deb ./public main
+    state: present
+
+- name: Install Plex APT Key
+  apt_key:
+    url: https://downloads.plex.tv/plex-keys/PlexSign.key
+    state: present
+
+- name: Install Plex
+  apt:
+    name: plexmediaserver
+    state: present
