@@ -1,20 +1,18 @@
 all: hosts zones
 
-foo:
-	$(info CHECK MODE ENABLED! Execute 'make commit' to commit changes to hosts)
-	@ansible-playbook -i hosts --check playbook.yml
+commit: hosts_commit zones_commit
 
-commit:
-	@ansible-playbook -i hosts playbook.yml
+ping:
+	@ansible all -i inventory -m ping
 
-pinghosts:
-	@ansible all -i hosts.inventory -m ping
+nodes:
+	@ansible-playbook -i inventory --check playbook.nodes.yml
 
-hosts:
-	@ansible-playbook -i hosts.inventory hosts.yml
-
-pingzones:
-	@ansible all -i zones.inventory -m ping
+nodes_commit:
+	@ansible-playbook -i inventory playbook.nodes.yml
 
 zones:
-	@ansible-playbook -i zones.inventory zones.yml
+	@ansible-playbook -i inventory --check playbook.zones.yml
+
+zones_commit:
+	@ansible-playbook -i inventory playbook.zones.yml

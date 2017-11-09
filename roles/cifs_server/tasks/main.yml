@@ -1,6 +1,20 @@
 ---
-- name: Install CIFS kernel driver
-  package: name=system/file-system/smb state=installed
-- name: Install CIFS service
-  package: name=service/file-system/smb state=installed
+- name: Install CIFS kernel driver (OmniOS only)
+  package: name=system/file-system/smb state=present
+  when: ansible_distribution == "OmniOS"
 
+- name: Install CIFS service (OmniOS only)
+  package: name=service/file-system/smb state=present
+  when: ansible_distribution == "OmniOS"
+
+- name: Enable SMB server service
+  service: name="smb/server" state=started
+
+- name: Enable SMB client service
+  service: name="smb/client" state=started
+
+- name: Enable bind service
+  service: name="bind" state=started
+
+- name: Enable idmap service
+  service: name="idmap" state=started

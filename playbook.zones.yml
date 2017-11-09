@@ -1,0 +1,26 @@
+---
+- hosts: plex.zone
+  roles:
+    - plexmediaserver
+
+- hosts: nas.zone
+  roles:
+    - cifs_server
+  tasks:
+    # Create groups
+    - group:
+        name: "{{ item.name }}"
+        state: present
+      with_items: "{{ host_groups_present }}"
+    
+    # Remove groups
+    - group:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ host_groups_absent }}"
+
+    # Create users
+    - user:
+        name: "{{ item.name }}"
+        state: present
+      with_items: "{{ host_users_present }}"

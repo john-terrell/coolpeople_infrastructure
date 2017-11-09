@@ -1,9 +1,10 @@
 ---
+zone_uuid: "6a8672ee-d3d6-442b-bbfb-9ced5bfb1327"
 host_groups_present: 
   - name: users
 
 host_groups_absent: 
-  - name: ansiblegroup
+  - name: unused
 
 host_users_present:
   - name: john
@@ -16,6 +17,7 @@ zfs_filesystems:
     state: present
     sharesmb: name=Test1
     casesensitivity: insensitive
+
   - name: tank/test2
     state: present
     sharesmb: name=Test2

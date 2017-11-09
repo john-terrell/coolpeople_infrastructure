@@ -1,0 +1,134 @@
+---
+##########################
+- hosts: nodes  
+  tasks:
+    #
+    # Make sure all nodes have NTP enabled and started
+    #
+    - name: Ensure NTP service is enabled and started.
+      service: name=ntp enabled=yes state=started
+
+    #
+    # Make sure all OmniOS hosts are scrubbing the rpool pool.
+    #
+    - name: Ensure rpool scrubbing is enabled in cron. (OmniOS only)
+      cron:
+        name: "Scrub rpool pool twice a month"
+        minute: "0"
+        hour: "3"
+        day: "1,15"
+        job: "/usr/sbin/zpool scrub rpool"
+      when: ansible_distribution == "OmniOS"
+
+    #
+    # Make sure all SmartOS hosts are scrubbing the zones pool
+    #
+    - name: Ensure zones scrubbing is enabled in cron. (SmartOS only)
+      cron:
+        name: "Scrub zones pool twice a month"
+        minute: "0"
+        hour: "3"
+        day: "1,15"
+        job: "/usr/sbin/zpool scrub zones"
+      when: ansible_distribution == "SmartOS"
+
+  #
+  # Host specific: storage00
+  #
+- hosts: storage00.internal.coolpeople.us
+  roles:
+    - cifs_server
+  tasks:
+    # Make sure and scrub the tank pool
+    - name: Ensure tank scrubbing is enabled in cron.
+      cron:
+        name: "Scrub tank pool twice a month"
+        minute: "0"
+        hour: "4"
+        day: "1,15"
+        job: "/usr/sbin/zpool scrub tank"
+
+    # Create groups
+    - group:
+        name: "{{ item.name }}"
+        state: present
+      with_items: "{{ host_groups_present }}"
+    
+    # Remove groups
+    - group:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ host_groups_absent }}"
+
+    # Create users
+#    - user:
+#        name: "{{ item.name }}"
+#        state: present
+#      with_items: "{{ host_users_present }}"
+
+  #
+  # Host specific: node01
+  #
+- hosts: node01.internal.coolpeople.us
+  tasks:
+    # Zone Image Installation
+    - name: Ensure Base-64 17.3 image exists
+      imgadm: uuid=23b267fc-ad02-11e7-94da-53e3d3884fe0 state=present
+    - name: Ensure Ubuntu 16.04 image exists
+      imgadm: uuid=7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b state=present
+#    - name: Ensure Centos 7 image exists
+#      imgadm: uuid=23ee2dbc-c155-11e6-ab6d-bf5689f582fd state=present
+
+    # Zone Creation
+    - name: Create NAS Zone
+      vmadm:
+        state: present
+        alias: nas
+        uuid: "{{ hostvars['nas.zone']['zone_uuid'] }}"
+        image_uuid: 23b267fc-ad02-11e7-94da-53e3d3884fe0
+        max_physical_memory: 2048
+        cpu_cap: 100
+        delegate_dataset: true
+#        indestructible_delegated: true
+#        limit_priv: "default,sys_smb"
+        nics:
+          - nic_tag: external
+            ip: 10.0.8.6
+            netmask: 255.255.0.0
+            gateway: 10.0.0.1
+            primary: true
+        resolvers:
+          - 10.0.0.1
+          - 8.8.8.8
+          - 8.8.4.4
+        quota: 3000
+        customer_metadata:
+          root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
+          user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
+    
+    - name: Create Plex Zone
+      vmadm:
+        state: present
+        brand: lx
+        kernel_version: 4.2
+        alias: plex
+        image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
+        max_physical_memory: 2048
+        cpu_cap: 100
+        nics:
+          - nic_tag: external
+            ip: 10.0.8.5
+            netmask: 255.255.0.0
+            gateway: 10.0.0.1
+            primary: true
+        resolvers:
+          - 10.0.0.1
+          - 8.8.8.8
+          - 8.8.4.4
+        quota: 3000
+        customer_metadata:
+          root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
+          user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
+
+    - name: Remove unused images
+      imgadm: uuid=* state=vacuumed

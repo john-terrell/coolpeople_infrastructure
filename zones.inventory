@@ -1,6 +1,0 @@
-[plexhosts]
-10.0.8.5 ansible_user=root
-
-#[corti]
-#files.corti.lan ansible_user=root
-#corti.kicks-ass.net ansible_port=2222 ansible_user=root
