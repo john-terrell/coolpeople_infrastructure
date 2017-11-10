@@ -49,13 +49,15 @@
         job: "/usr/sbin/zpool scrub tank"
 
     # Create groups
-    - group:
+    - name: Adding groups
+      group:
         name: "{{ item.name }}"
         state: present
       with_items: "{{ host_groups_present }}"
     
     # Remove groups
-    - group:
+    - name: Removing groups
+      group:
         name: "{{ item.name }}"
         state: absent
       with_items: "{{ host_groups_absent }}"

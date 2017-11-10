@@ -2,24 +2,41 @@
 zone_uuid: "6a8672ee-d3d6-442b-bbfb-9ced5bfb1327"
 host_groups_present: 
   - name: users
+    gid: 12000
 
 host_groups_absent: 
-  - name: unused
+  - name: dudes
 
 host_users_present:
   - name: john
-
+    uid: 15001
+    groups: "users"   # comma separated
+ 
 host_users_absent:
   - name: unused
 
-zfs_filesystems:
-  - name: tank/test1
+zfs_filesystems_present:
+  - name: "zones/{{ zone_uuid }}/data/Media"
     state: present
-    sharesmb: name=Test1
     casesensitivity: insensitive
+    quota: none
 
-  - name: tank/test2
+  - name: "zones/{{ zone_uuid }}/data/Photography"
     state: present
-    sharesmb: name=Test2
     casesensitivity: insensitive
+    quota: none
+
+  - name: "zones/{{ zone_uuid }}/data/Foof"
+    state: present
+    casesensitivity: insensitive
+    quota: none
     
+smb_shares_present:
+  - name: Media
+    path: /zones/{{ zone_uuid }}/data/Media
+
+  - name: Photography
+    path: /zones/{{ zone_uuid }}/data/Photography
+
+  - name: Foof
+    path: /zones/{{ zone_uuid }}/data/Foof

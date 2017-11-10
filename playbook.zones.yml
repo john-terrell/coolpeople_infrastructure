@@ -11,6 +11,7 @@
     - group:
         name: "{{ item.name }}"
         state: present
+        gid: "{{ item.gid }}"
       with_items: "{{ host_groups_present }}"
     
     # Remove groups
@@ -22,5 +23,21 @@
     # Create users
     - user:
         name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        groups: "{{ item.groups }}"
         state: present
       with_items: "{{ host_users_present }}"
+
+    # Create ZFS filesystems
+    - name: Creating ZFS filesystems.
+      zfs:
+        name: "{{ item.name }}"
+        state: present
+#        casesensitivity: "{{ item.casesensitivity }}"
+        quota: "{{ item.quota }}"
+      with_items: "{{ zfs_filesystems_present }}"
+
+    # Create SMB Shares
+    - name: Creating SMB shares.
+      shell: sharemgr show | grep "{{ item.name }}" > /dev/null || sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb
+      with_items: "{{ smb_shares_present }}"

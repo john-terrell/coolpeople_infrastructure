@@ -1,6 +1,6 @@
-all: hosts zones
+all: nodes zones
 
-commit: hosts_commit zones_commit
+commit: nodes_commit zones_commit
 
 ping:
 	@ansible all -i inventory -m ping
