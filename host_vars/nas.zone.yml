@@ -11,32 +11,27 @@ host_users_present:
   - name: john
     uid: 15001
     groups: "users"   # comma separated
+    password: $6$OdGlBONSeAlpz1Y2$6ppqG/HmSVIhGDvZQLRrPycOy6F1nv22lHezXpkW1xkJ9oDEBK78wn0ov6M1m9Pq7x9Dehr7RgTcGKfW2q63N1
  
 host_users_absent:
   - name: unused
 
 zfs_filesystems_present:
-  - name: "zones/{{ zone_uuid }}/data/Media"
+  - name: "zones/{{ zone_uuid }}/data/media"
     state: present
     casesensitivity: insensitive
     quota: none
+    mountpoint: /media
 
-  - name: "zones/{{ zone_uuid }}/data/Photography"
+  - name: "zones/{{ zone_uuid }}/data/photography"
     state: present
     casesensitivity: insensitive
     quota: none
+    mountpoint: /photography
 
-  - name: "zones/{{ zone_uuid }}/data/Foof"
-    state: present
-    casesensitivity: insensitive
-    quota: none
-    
 smb_shares_present:
   - name: Media
-    path: /zones/{{ zone_uuid }}/data/Media
+    path: /media
 
   - name: Photography
-    path: /zones/{{ zone_uuid }}/data/Photography
-
-  - name: Foof
-    path: /zones/{{ zone_uuid }}/data/Foof
+    path: /photography

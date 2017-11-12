@@ -3,5 +3,5 @@ node01.internal.coolpeople.us ansible_user=root ansible_python_interpreter="/opt
 storage00.internal.coolpeople.us ansible_user=root
 
 [zones]
-plex.zone ansible_host=10.0.8.5 ansible_user=root
-nas.zone ansible_host=10.0.8.6 ansible_user=root ansible_python_interpreter=/opt/local/bin/python
+nas.zone ansible_host=10.0.9.2      ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+plex.zone ansible_host=10.0.9.3     ansible_user=root

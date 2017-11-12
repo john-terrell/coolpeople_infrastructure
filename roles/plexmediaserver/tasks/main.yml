@@ -9,7 +9,11 @@
     url: https://downloads.plex.tv/plex-keys/PlexSign.key
     state: present
 
+- name: Update APT
+  apt: update_cache=yes cache_valid_time=3600
+
 - name: Install Plex
   apt:
     name: plexmediaserver
+    allow_unauthenticated: yes
     state: present

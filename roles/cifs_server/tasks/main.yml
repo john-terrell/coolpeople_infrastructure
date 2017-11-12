@@ -18,3 +18,7 @@
 
 - name: Enable idmap service
   service: name="idmap" state=started
+
+- name: Enable SMB support in PAM
+  shell: 'grep pam_smb_passwd.so.1 /etc/pam.conf || echo "other\tpassword required\tpam_smb_passwd.so.1\tnowarn" >> /etc/pam.conf'
+

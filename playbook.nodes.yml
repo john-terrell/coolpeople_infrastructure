@@ -95,7 +95,7 @@
 #        limit_priv: "default,sys_smb"
         nics:
           - nic_tag: external
-            ip: 10.0.8.6
+            ip: "{{ hostvars['nas.zone']['ansible_host'] }}"
             netmask: 255.255.0.0
             gateway: 10.0.0.1
             primary: true
@@ -103,7 +103,7 @@
           - 10.0.0.1
           - 8.8.8.8
           - 8.8.4.4
-        quota: 3000
+        quota: 80
         customer_metadata:
           root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
           user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
@@ -119,7 +119,7 @@
         cpu_cap: 100
         nics:
           - nic_tag: external
-            ip: 10.0.8.5
+            ip: "{{ hostvars['plex.zone']['ansible_host'] }}"
             netmask: 255.255.0.0
             gateway: 10.0.0.1
             primary: true
@@ -127,7 +127,7 @@
           - 10.0.0.1
           - 8.8.8.8
           - 8.8.4.4
-        quota: 3000
+        quota: 30
         customer_metadata:
           root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
           user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"

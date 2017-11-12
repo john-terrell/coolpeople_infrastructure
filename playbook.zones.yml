@@ -25,6 +25,7 @@
         name: "{{ item.name }}"
         uid: "{{ item.uid }}"
         groups: "{{ item.groups }}"
+        password: "{{ item.password }}"
         state: present
       with_items: "{{ host_users_present }}"
 
@@ -35,6 +36,13 @@
         state: present
 #        casesensitivity: "{{ item.casesensitivity }}"
         quota: "{{ item.quota }}"
+        mountpoint: "{{ item.mountpoint }}"
+      with_items: "{{ zfs_filesystems_present }}"
+    - name: Set Directory Properties
+      file:
+        path: "{{ item.mountpoint }}"
+        state: directory
+        mode: 0777
       with_items: "{{ zfs_filesystems_present }}"
 
     # Create SMB Shares
