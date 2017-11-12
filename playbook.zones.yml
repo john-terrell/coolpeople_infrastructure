@@ -47,5 +47,7 @@
 
     # Create SMB Shares
     - name: Creating SMB shares.
-      shell: sharemgr show | grep "{{ item.name }}" > /dev/null || sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb
+      shell: 'sharemgr show | grep "{{ item.path }}" || { sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb && echo "Share Added"; }'
+      register: sharemgr_output
+      changed_when: '"Share Added" in sharemgr_output.stdout'
       with_items: "{{ smb_shares_present }}"
