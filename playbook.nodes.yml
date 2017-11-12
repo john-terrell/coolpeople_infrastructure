@@ -87,7 +87,7 @@
         state: present
         brand: lx
         kernel_version: 4.2
-        alias: plex
+        alias: sambadc
         image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
         max_physical_memory: 4096
         cpu_cap: 100
