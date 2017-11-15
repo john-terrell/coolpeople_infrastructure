@@ -78,21 +78,25 @@
       imgadm: uuid=23b267fc-ad02-11e7-94da-53e3d3884fe0 state=present
     - name: Ensure Ubuntu 16.04 image exists
       imgadm: uuid=7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b state=present
-#    - name: Ensure Centos 7 image exists
-#      imgadm: uuid=23ee2dbc-c155-11e6-ab6d-bf5689f582fd state=present
+    - name: Ensure Unbuntu 16.04 KVM image exists
+      imgadm: uuid=342045ce-6af1-4adf-9ef1-e5bfaf9de28c state=present
 
     # Zone Creation
     - name: Create SambaDC Zone
       vmadm:
         state: present
-        brand: lx
+        brand: kvm
         kernel_version: 4.2
         alias: sambadc
-        image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
-        max_physical_memory: 4096
-        cpu_cap: 100
+        ram: 4096
+        vcpus: 1
+        disks:
+          - model: virtio
+            boot: true
+            image_uuid: 342045ce-6af1-4adf-9ef1-e5bfaf9de28c
         nics:
           - nic_tag: external
+            model: virtio
             ip: "{{ hostvars['sambadc.zone']['ansible_host'] }}"
             netmask: 255.255.0.0
             gateway: 10.0.0.1

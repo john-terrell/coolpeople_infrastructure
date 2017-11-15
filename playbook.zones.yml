@@ -1,4 +1,22 @@
 ---
+- hosts: sambadc.zone
+  vars:
+    - enable_dhcp_services: false
+    - samba_create_domain_controller: true
+    - samba_create_domain_users: false  #defines if users defined in samba_domain_users list should be created
+    - samba_server_role: 'active directory domain controller'  #defines server role...(standalone server or active directory domain controller)
+    - samba_ad_info: { kerberos_realm: coolpeople.us, netbios_domain_name: COOLPEOPLE, dns_forwarder: 10.0.0.1, adminpass: Iwboj15! }
+  roles:
+    - role: ansible-isc-dhcp
+      when: enable_dhcp_services is defined and enable_dhcp_services
+    - role: ansible-ntp
+    - role: ansible-samba
+  pre_tasks:
+    - name: Update APT Cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
 - hosts: plex.zone
   roles:
     - plexmediaserver
