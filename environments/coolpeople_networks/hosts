@@ -1,0 +1,20 @@
+#
+# Coolpeople Networks
+#
+[nodes]
+node01 ansible_host=node01.internal.coolpeople.us ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
+storage00 ansible_host=storage00.internal.coolpeople.us ansible_user=root
+
+[zones:children]
+samba_domain_controllers
+storage_servers
+plex_media_servers
+
+[samba_domain_controllers]
+sambadc.zone    ansible_host=10.0.9.1   ansible_user=root ansible_python_interpreter=/usr/bin/python3
+
+[storage_servers]
+nas.zone        ansible_host=10.0.9.2   ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+
+[plex_media_servers]
+plex.zone       ansible_host=10.0.9.3   ansible_user=root

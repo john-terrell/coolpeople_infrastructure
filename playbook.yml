@@ -1,37 +1,39 @@
 ---
 ##########################
-- hosts: nodes  
+# Global variables are defined in group_vars/all.yml
+##########################
+- hosts: nodes
   tasks:
-    #
-    # Make sure all nodes have NTP enabled and started
-    #
-    - name: Ensure NTP service is enabled and started.
-      service: name=ntp enabled=yes state=started
-
-    #
-    # Make sure all OmniOS hosts are scrubbing the rpool pool.
-    #
-    - name: Ensure rpool scrubbing is enabled in cron. (OmniOS only)
-      cron:
-        name: "Scrub rpool pool twice a month"
-        minute: "0"
-        hour: "3"
-        day: "1,15"
-        job: "/usr/sbin/zpool scrub rpool"
-      when: ansible_distribution == "OmniOS"
-
-    #
-    # Make sure all SmartOS hosts are scrubbing the zones pool
-    #
-    - name: Ensure zones scrubbing is enabled in cron. (SmartOS only)
-      cron:
-        name: "Scrub zones pool twice a month"
-        minute: "0"
-        hour: "3"
-        day: "1,15"
-        job: "/usr/sbin/zpool scrub zones"
+    # SmartOS
+    - block:
+        - name: Ensure pgkin cache updated (SmartOS)
+          pkgin: update_cache=yes
+        - name: Ensure pv installed (SmartOS)
+          pkgin: name=pv state=present
+        - name: Ensure mbuffer installed (SmartOS)
+          pkgin: name=mbuffer state=present
+        - name: Ensure zones scrubbing is enabled in cron. (SmartOS)
+          cron:
+            name: "Scrub zones pool twice a month"
+            minute: "0"
+            hour: "3"
+            day: "1,15"
+            job: "/usr/sbin/zpool scrub zones"
       when: ansible_distribution == "SmartOS"
 
+    # OmniOS
+    - block:
+        - name: Ensure NTP service is enabled and started.
+          service: name=ntp enabled=yes state=started
+        - name: Ensure rpool scrubbing is enabled in cron. (OmniOS)
+          cron:
+            name: "Scrub rpool pool twice a month"
+            minute: "0"
+            hour: "3"
+            day: "1,15"
+            job: "/usr/sbin/zpool scrub rpool"
+      when: ansible_distribution == "OmniOS"
+    
   #
   # Host specific: storage00
   #
@@ -88,7 +90,7 @@
         brand: kvm
         kernel_version: 4.2
         alias: sambadc
-        ram: 4096
+        ram: 2048
         vcpus: 1
         disks:
           - model: virtio
@@ -162,3 +164,86 @@
 
     - name: Remove unused images
       imgadm: uuid=* state=vacuumed
+
+###### Zones ######
+
+## sambadc.zone
+- hosts: samba_domain_controllers
+  vars:
+    samba_server_role: 'active directory domain controller'  #defines server role...(standalone server or active directory domain controller)
+    samba_create_domain_controller: true
+    enable_dhcp_services: false
+    samba_create_domain_users: true  #defines if users defined in samba_domain_users list should be created
+    samba_ad_info: { kerberos_realm: "{{ kerberos_realm }}", netbios_domain_name: "{{ domain_name }}", ad_dc_hostname: "dc1", dns_forwarder: 10.0.0.1, adminpass: Iwboj15! }
+  roles:
+    - role: ansible-isc-dhcp
+      when: enable_dhcp_services is defined and enable_dhcp_services
+    - role: ansible-ntp
+    - role: ansible-samba
+  pre_tasks:
+    - name: Update APT Cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+  tasks:
+    # Create Unix users that match the Samba Users
+    - user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        state: present
+      with_items: "{{ samba_domain_users }}"
+
+## plex.zone
+- hosts: plex_media_servers
+  roles:
+    - plexmediaserver
+
+## nas.zone
+- hosts: storage_servers
+  roles:
+    - cifs_server
+  tasks:
+    # Create groups
+    - group:
+        name: "{{ item.name }}"
+        state: present
+        gid: "{{ item.gid }}"
+      with_items: "{{ host_groups_present }}"
+    
+    # Remove groups
+    - group:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ host_groups_absent }}"
+
+    # Create users
+    - user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        groups: "{{ item.groups }}"
+        password: "{{ item.password }}"
+        state: present
+      with_items: "{{ host_users_present }}"
+
+    # Create ZFS filesystems
+    - name: Creating ZFS filesystems.
+      zfs:
+        name: "{{ item.name }}"
+        state: present
+#        casesensitivity: "{{ item.casesensitivity }}"
+        quota: "{{ item.quota }}"
+        mountpoint: "{{ item.mountpoint }}"
+      with_items: "{{ zfs_filesystems_present }}"
+    - name: Set Directory Properties
+      file:
+        path: "{{ item.mountpoint }}"
+        state: directory
+        mode: 0777
+      with_items: "{{ zfs_filesystems_present }}"
+
+    # Create SMB Shares
+    - name: Creating SMB shares.
+      shell: 'sharemgr show | grep "{{ item.path }}" || { sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb && echo "Share Added"; }'
+      register: sharemgr_output
+      changed_when: '"Share Added" in sharemgr_output.stdout'
+      with_items: "{{ smb_shares_present }}"

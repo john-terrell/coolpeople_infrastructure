@@ -1,0 +1,21 @@
+---
+kerberos_realm: COOLPEOPLE.US
+domain_name: COOLPEOPLE
+domain_groups: 
+  - Users
+  - Photographers
+
+samba_domain_users:
+  - name: john
+    password: john01!
+    uid: 13001
+    groups:
+      - Users
+      - Domain Administrators
+
+  - name: kerry
+    password: kerry01!
+    uid: 13002
+    groups: 
+      - Users
+      - Photographers

@@ -1,0 +1,3 @@
+---
+zone_uuid: "994F6CBE-B4A8-4F2A-9DED-03FFB7689C5F"
+samba_groups: "{{ domain_groups }}"
