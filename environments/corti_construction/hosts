@@ -2,4 +2,10 @@
 # Corti Construction
 #
 [nodes]
-corti01.node    ansible_host=172.16.0.2   ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
+corti01.node    ansible_host=172.16.0.2     ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
+
+[zones:children]
+storage_servers
+
+[storage_servers]
+nas01.zone      ansible_host=172.16.1.1     ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based

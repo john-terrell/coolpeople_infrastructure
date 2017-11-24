@@ -1,0 +1,10 @@
+---
+rabbitmq_server_zone_alias: "rabbitmq"
+rabbitmq_server_zone_image_uuid: "23b267fc-ad02-11e7-94da-53e3d3884fe0"
+rabbitmq_server_zone_cpu_cap: 100
+rabbitmq_server_zone_memory_size: 2048
+rabbitmq_server_zone_quota_in_gb: 80
+rabbitmq_server_zone_ip: 192.168.10.11
+rabbitmq_server_zone_netmask: "{{ network_netmask | default('255.255.255.0') }}"
+rabbitmq_server_zone_gateway: "{{ network_gateway | default('192.168.10.1') }}"
+rabbitmq_server_zone_dns_resolvers: "{{ network_dns_resolvers }}"

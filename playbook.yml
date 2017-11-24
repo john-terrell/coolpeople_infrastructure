@@ -37,7 +37,7 @@
   #
   # Host specific: storage00
   #
-- hosts: storage00.internal.coolpeople.us
+- hosts: storage00
   roles:
     - cifs_server
   tasks:
@@ -56,6 +56,7 @@
         name: "{{ item.name }}"
         state: present
       with_items: "{{ host_groups_present }}"
+      when: host_groups_present is defined
     
     # Remove groups
     - name: Removing groups
@@ -63,123 +64,54 @@
         name: "{{ item.name }}"
         state: absent
       with_items: "{{ host_groups_absent }}"
+      when: host_groups_absent is defined
 
-    # Create users
-#    - user:
-#        name: "{{ item.name }}"
-#        state: present
-#      with_items: "{{ host_users_present }}"
-
-  #
-  # Host specific: node01
-  #
-- hosts: node01.internal.coolpeople.us
-  tasks:
-    # Zone Image Installation
-    - name: Ensure Base-64 17.3 image exists
-      imgadm: uuid=23b267fc-ad02-11e7-94da-53e3d3884fe0 state=present
-    - name: Ensure Ubuntu 16.04 image exists
-      imgadm: uuid=7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b state=present
-    - name: Ensure Unbuntu 16.04 KVM image exists
-      imgadm: uuid=342045ce-6af1-4adf-9ef1-e5bfaf9de28c state=present
-
-    # Zone Creation
-    - name: Create SambaDC Zone
-      vmadm:
-        state: present
-        brand: kvm
-        kernel_version: 4.2
-        alias: sambadc
-        ram: 2048
-        vcpus: 1
-        disks:
-          - model: virtio
-            boot: true
-            image_uuid: 342045ce-6af1-4adf-9ef1-e5bfaf9de28c
-        nics:
-          - nic_tag: external
-            model: virtio
-            ip: "{{ hostvars['sambadc.zone']['ansible_host'] }}"
-            netmask: 255.255.0.0
-            gateway: 10.0.0.1
-            primary: true
-        resolvers:
-          - 10.0.0.1
-          - 8.8.8.8
-          - 8.8.4.4
-        quota: 30
-        customer_metadata:
-          root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
-          user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
-
-    - name: Create NAS Zone
-      vmadm:
-        state: present
-        alias: nas
-        uuid: "{{ hostvars['nas.zone']['zone_uuid'] }}"
-        image_uuid: 23b267fc-ad02-11e7-94da-53e3d3884fe0
-        max_physical_memory: 2048
-        cpu_cap: 100
-        delegate_dataset: true
-#        indestructible_delegated: true
-#        limit_priv: "default,sys_smb"
-        nics:
-          - nic_tag: external
-            ip: "{{ hostvars['nas.zone']['ansible_host'] }}"
-            netmask: 255.255.0.0
-            gateway: 10.0.0.1
-            primary: true
-        resolvers:
-          - 10.0.0.1
-          - 8.8.8.8
-          - 8.8.4.4
-        quota: 80
-        customer_metadata:
-          root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
-          user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
-    
-    - name: Create Plex Zone
-      vmadm:
-        state: present
-        brand: lx
-        kernel_version: 4.2
-        alias: plex
-        image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
-        max_physical_memory: 2048
-        cpu_cap: 100
-        nics:
-          - nic_tag: external
-            ip: "{{ hostvars['plex.zone']['ansible_host'] }}"
-            netmask: 255.255.0.0
-            gateway: 10.0.0.1
-            primary: true
-        resolvers:
-          - 10.0.0.1
-          - 8.8.8.8
-          - 8.8.4.4
-        quota: 30
-        customer_metadata:
-          root_authorized_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYIHv3DoXnAMn+dggUup1a+jjSqpZiIU5ThgljXHG9KM+iy1W3zo9qshUE7vBj/l7l5aHzRKyXsmWb6EdmtlVBnYl7SH5IMGaEFlB6n7T+yoMRl7VczZZxvP+VSAac2HeLPvdrCDeJCckfkHeTg9E3rt2PcAz0REKDCm34lpsedgM4QrVh8D54NgqLCdpT+QpidEBwE1T5wGMId4OwBB+r1VJZyn+lstJreQ0mu67qn3TFKu5AxZoTdDj6BSDqqHEos5KirS4pz3zt3r5IbC3mv8vDm9+o6O5M2f7R6RRNfD9IPJANmO0k2Ajf529I0bGgAGgIpIXb8OaI6G+L48dR john@Johns-MacBook-Pro.local"
-          user-script : "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys"
-
-    - name: Remove unused images
-      imgadm: uuid=* state=vacuumed
-
-###### Zones ######
-
-## sambadc.zone
-- hosts: samba_domain_controllers
-  vars:
-    samba_server_role: 'active directory domain controller'  #defines server role...(standalone server or active directory domain controller)
-    samba_create_domain_controller: true
-    enable_dhcp_services: false
-    samba_create_domain_users: true  #defines if users defined in samba_domain_users list should be created
-    samba_ad_info: { kerberos_realm: "{{ kerberos_realm }}", netbios_domain_name: "{{ domain_name }}", ad_dc_hostname: "dc1", dns_forwarder: 10.0.0.1, adminpass: Iwboj15! }
+- hosts: cifs_server_zone_hosts
   roles:
-    - role: ansible-isc-dhcp
-      when: enable_dhcp_services is defined and enable_dhcp_services
-    - role: ansible-ntp
-    - role: ansible-samba
+    - role: cifs_server_zone_host
+      cifs_server_zone_alias: nas01
+      cifs_server_zone_uuid: "{{ hostvars['nas01.zone']['zone_uuid'] }}"
+      cifs_server_zone_ip: "{{ hostvars['nas01.zone']['ansible_host'] }}"  
+
+- hosts: plex_server_zone_hosts
+  roles:
+    - role: plex_server_zone_host
+      plex_server_zone_alias: plex01
+      plex_server_zone_ip: "{{ hostvars['plex01.zone']['ansible_host']}}"
+
+- hosts: rabbitmq_server_zone_hosts
+  roles:
+    - role: rabbitmq_server_zone_host
+      rabbitmq_server_zone_alias: rabbitma01
+      rabbitmq_server_zone_ip: "{{ hostvars['rabbitmq01.zone']['ansible_host']}}"
+
+- hosts: redis_datastore_zone_hosts
+  roles:
+    - role: redis_datastore_zone_host
+      redis_datastore_zone_alias: redis01
+      redis_datastore_zone_ip: "{{ hostvars['redis01.zone']['ansible_host']}}"
+
+- hosts: samba_domain_controller_zone_hosts
+  roles:
+    - role: samba_domain_controller_zone_host
+      samba_domain_controller_zone_alias: sambadc01
+      samba_domain_controller_zone_ip: "{{ hostvars['sambadc01.zone']['ansible_host']}}"
+
+## Redis Datastores
+- hosts: redis_datastores
+  roles:
+    - role: redis_datastore
+
+## RabbitMQ Servers
+- hosts: rabbitmq_servers
+  roles:
+    - role: rabbitmq_server
+
+## Samba4 Domain Controllers
+- hosts: samba_domain_controllers
+  roles:
+    - role: samba_domain_controller
+
   pre_tasks:
     - name: Update APT Cache
       apt:
@@ -193,57 +125,13 @@
         state: present
       with_items: "{{ samba_domain_users }}"
 
-## plex.zone
-- hosts: plex_media_servers
-  roles:
-    - plexmediaserver
-
-## nas.zone
+## Storage Servers
 - hosts: storage_servers
   roles:
     - cifs_server
-  tasks:
-    # Create groups
-    - group:
-        name: "{{ item.name }}"
-        state: present
-        gid: "{{ item.gid }}"
-      with_items: "{{ host_groups_present }}"
-    
-    # Remove groups
-    - group:
-        name: "{{ item.name }}"
-        state: absent
-      with_items: "{{ host_groups_absent }}"
 
-    # Create users
-    - user:
-        name: "{{ item.name }}"
-        uid: "{{ item.uid }}"
-        groups: "{{ item.groups }}"
-        password: "{{ item.password }}"
-        state: present
-      with_items: "{{ host_users_present }}"
+  ## Plex Media Servers
+- hosts: plex_servers
+  roles:
+    - plex_server
 
-    # Create ZFS filesystems
-    - name: Creating ZFS filesystems.
-      zfs:
-        name: "{{ item.name }}"
-        state: present
-#        casesensitivity: "{{ item.casesensitivity }}"
-        quota: "{{ item.quota }}"
-        mountpoint: "{{ item.mountpoint }}"
-      with_items: "{{ zfs_filesystems_present }}"
-    - name: Set Directory Properties
-      file:
-        path: "{{ item.mountpoint }}"
-        state: directory
-        mode: 0777
-      with_items: "{{ zfs_filesystems_present }}"
-
-    # Create SMB Shares
-    - name: Creating SMB shares.
-      shell: 'sharemgr show | grep "{{ item.path }}" || { sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb && echo "Share Added"; }'
-      register: sharemgr_output
-      changed_when: '"Share Added" in sharemgr_output.stdout'
-      with_items: "{{ smb_shares_present }}"

@@ -1,0 +1,10 @@
+---
+- name: Redis Restart (Ubuntu)
+  service: name=redis-server state=restarted enabled=yes
+  become: true
+  when: ansible_distribution == "Ubuntu"
+
+- name: Redis Restart (SmartOS)
+  service: name=redis state=restarted enabled=yes
+  become: true
+  when: ansible_distribution == "SmartOS"

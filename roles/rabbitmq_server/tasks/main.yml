@@ -1,0 +1,11 @@
+---
+# SmartOS
+- block:
+  - name: Ensure RabbitMQ is present (SmartOS)
+    pkgin: name=rabbitmq state=present
+  - name: Ensure RabbitMQ is started (SmartOS)
+    service: name=rabbitmq state=started enabled=yes
+    become: true
+  - name: Ensure htop is present (SmartOS)
+    pkgin: name=htop state=present
+  when: ansible_distribution == "SmartOS"

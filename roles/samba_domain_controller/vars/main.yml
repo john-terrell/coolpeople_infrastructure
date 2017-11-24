@@ -1,0 +1,6 @@
+---
+samba_server_role: 'active directory domain controller'  #defines server role...(standalone server or active directory domain controller)
+samba_create_domain_controller: true
+enable_dhcp_services: false
+samba_create_domain_users: true  #defines if users defined in samba_domain_users list should be created
+samba_ad_info: { kerberos_realm: "{{ kerberos_realm }}", netbios_domain_name: "{{ domain_name }}", ad_dc_hostname: "dc1", dns_forwarder: 10.0.0.1, adminpass: Iwboj15! }

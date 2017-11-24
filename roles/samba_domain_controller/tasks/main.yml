@@ -1,0 +1,8 @@
+---
+- include_role:
+    name: ansible-isc-dhcp
+  when: enable_dhcp_services is defined and enable_dhcp_services
+- include_role:
+    name: ansible-ntp
+- include_role:
+    name: ansible-samba

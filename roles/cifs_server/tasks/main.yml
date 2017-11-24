@@ -24,3 +24,56 @@
   register: pam_output
   changed_when: '"Changed" in pam_output.stdout'
 
+# Create groups
+- name: Creating Groups
+  group:
+    name: "{{ item.name }}"
+    state: present
+#    gid: "{{ item.gid }}"
+  with_items: "{{ host_groups_present }}"
+  when: host_groups_present is defined
+
+# Remove groups
+- name: Removing Groups
+  group:
+    name: "{{ item.name }}"
+    state: absent
+  with_items: "{{ host_groups_absent }}"
+  when: host_groups_absent is defined
+
+# Create users
+- name: Creating Local Users
+  user:
+    name: "{{ item.name }}"
+    uid: "{{ item.uid }}"
+    groups: "{{ item.groups }}"
+    password: "{{ item.password }}"
+    state: present
+  with_items: "{{ host_users_present }}"
+  when: host_users_present is defined
+
+# Create ZFS filesystems
+- name: Creating ZFS filesystems.
+  zfs:
+    name: "{{ item.name }}"
+    state: present
+    quota: "{{ item.quota }}"
+    mountpoint: "{{ item.mountpoint }}"
+  with_items: "{{ zfs_filesystems_present }}"
+  when: zfs_filesystems_present is defined
+  
+- name: Set Directory Properties
+  file:
+    path: "{{ item.mountpoint }}"
+    state: directory
+    mode: 0777
+  with_items: "{{ zfs_filesystems_present }}"
+  when: zfs_filesystems_present is defined
+
+# Create SMB Shares
+- name: Creating SMB shares.
+  shell: 'sharemgr show | grep "{{ item.path }}" || { sharemgr add-share -r "{{ item.name }}" -s "{{ item.path }}" smb && echo "Share Added"; }'
+  register: sharemgr_output
+  changed_when: '"Share Added" in sharemgr_output.stdout'
+  with_items: "{{ smb_shares_present }}"
+  when: smb_shares_present is defined

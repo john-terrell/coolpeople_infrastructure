@@ -1,0 +1,40 @@
+---
+# Ubuntu
+- block:
+  - name: Ensure Redis is present (Ubuntu)
+    apt: pkg=redis-server state=latest
+    become: true
+
+  - name: Ensure Redis is started (Ubuntu)
+    service: name=redis-server state=started enabled=yes
+    become: true
+
+  - name: Ensure Redis Configuration (Ubuntu)
+    template: src=redis.conf.j2 dest=/etc/redis/redis.conf owner=root group=root mode=0644
+    become: true
+    notify: Redis Restart (Ubuntu)
+  when: ansible_distribution == "Ubuntu"
+
+# SmartOS
+- block:      
+  - name: Ensure Redis is present (SmartOS)
+    pkgin: name=redis state=present
+
+  - name: Ensure /var/lib/redis exists
+    file:
+      path: /var/lib/redis
+      state: directory
+      owner: redis
+
+  - name: Ensure Redis is started (SmartOS)
+    service: name=redis state=started enabled=yes
+    become: true
+
+  - name: Ensure Redis Configuration (SmartOS)
+    template: src=redis.conf.j2 dest=/opt/local/etc/redis.conf owner=root group=root mode=0644
+    become: true
+    notify: Redis Restart (SmartOS)
+
+  - name: Ensure htop is present (SmartOS)
+    pkgin: name=htop state=present
+  when: ansible_distribution == "SmartOS"
