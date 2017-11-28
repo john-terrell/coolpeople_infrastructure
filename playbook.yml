@@ -33,7 +33,7 @@
             day: "1,15"
             job: "/usr/sbin/zpool scrub rpool"
       when: ansible_distribution == "OmniOS"
-    
+
   #
   # Host specific: storage00
   #
@@ -70,7 +70,7 @@
   roles:
     - role: cifs_server_zone_host
       cifs_server_zone_alias: nas01
-      cifs_server_zone_uuid: "{{ hostvars['nas01.zone']['zone_uuid'] }}"
+      cifs_server_zone_uuid: "{{ hostvars['nas01.zone']['zone_uuid']|default(omit) }}"
       cifs_server_zone_ip: "{{ hostvars['nas01.zone']['ansible_host'] }}"  
 
 - hosts: plex_server_zone_hosts
@@ -112,26 +112,18 @@
   roles:
     - role: samba_domain_controller
 
-  pre_tasks:
-    - name: Update APT Cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-  tasks:
-    # Create Unix users that match the Samba Users
-    - user:
-        name: "{{ item.name }}"
-        uid: "{{ item.uid }}"
-        state: present
-      with_items: "{{ samba_domain_users }}"
-
 ## Storage Servers
 - hosts: storage_servers
   roles:
     - cifs_server
+    - ansible-resolv
 
-  ## Plex Media Servers
+## Plex Media Servers
 - hosts: plex_servers
   roles:
     - plex_server
 
+## Unifi Servers
+- hosts: unifi_servers
+  roles:
+    - unifi_server

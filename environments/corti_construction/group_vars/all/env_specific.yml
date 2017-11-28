@@ -1,0 +1,16 @@
+---
+network_netmask: 255.255.0.0
+network_gateway: 172.16.0.1
+network_dns_resolvers:
+  - 172.16.0.1
+  - 8.8.8.8
+  - 8.8.4.4
+
+network_kerberos_realm: CORTI.LOCAL
+network_kerberos_kdc: cortiserver.corti.local
+zone_nic_tag: admin
+
+# These are for ansible-resolv
+resolv_nameservers:
+  - 172.16.200.1
+resolv_domain: corti.local

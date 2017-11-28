@@ -1,0 +1,16 @@
+# Global parameters
+[global]
+        dns forwarder = {{ samba_domain_controller_dns_forwarder }}
+        idmap_ldb:use rfc2307 = yes
+        netbios name = {{ ansible_hostname|upper|truncate(15, True, '') }}
+        realm = {{ samba_domain_controller_kerberos_realm|upper }}
+        server role = active directory domain controller
+        workgroup = {{ samba_domain_controller_domain_name|upper }}
+
+[netlogon]
+	path = /var/lib/samba/sysvol/{{ samba_domain_controller_kerberos_realm|lower }}/scripts
+	read only = No
+
+[sysvol]
+	path = /var/lib/samba/sysvol
+	read only = No

@@ -1,0 +1,3 @@
+---
+cifs_server_kerberos_realm: "{{ network_kerberos_realm | default('SAMPLE.ORG')}}"
+cifs_server_kerberos_kdc: "{{ network_kerberos_kdc | default('kdc.sample.org')}}"

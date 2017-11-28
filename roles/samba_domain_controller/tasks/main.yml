@@ -1,8 +1,36 @@
 ---
-- include_role:
-    name: ansible-isc-dhcp
-  when: enable_dhcp_services is defined and enable_dhcp_services
-- include_role:
-    name: ansible-ntp
-- include_role:
-    name: ansible-samba
+- include: debian.yml
+  when: ansible_os_family == "Debian"
+
+- include: smartos.yml
+  when: ansible_distribution == "SmartOS"
+
+- name: Starting SMBD Service
+  service: 
+    name: smbd
+    state: started
+
+- name: Starting NMBD Service
+  service: 
+    name: nmbd
+    state: started
+
+- name: Checking Domain Info
+  shell: "samba-tool domain info localhost"
+  become: true
+  register: _samba_ad_info
+  changed_when: false
+  failed_when: false
+
+- debug:
+    msg: "Domain Check Results: {{ _samba_ad_info }}"
+
+- name: Configuring Active Directory
+  shell: "samba-tool domain provision --realm={{ samba_domain_controller_kerberos_realm|upper }} --domain={{ samba_domain_controller_domain_name|upper }} --adminpass='{{ samba_domain_controller_admin_password }}' --server-role='domain controller' --use-rfc2307"
+  become: true
+  register: _samba_ad_created
+  when: '"foo" not in _samba_ad_info.stdout'
+
+- include: domain_groups.yml
+
+- include: domain_users.yml

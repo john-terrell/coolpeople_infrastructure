@@ -1,0 +1,27 @@
+---
+- name: Install Unifi APT Repository
+  apt_repository:
+    repo: deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti
+    state: present
+
+- name: Install Unifi APT Key
+  apt_key:
+    url: https://dl.ubnt.com/unifi/unifi-repo.gpg
+    state: present
+
+- name: Update APT
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install Unifi
+  apt:
+    name: unifi
+    allow_unauthenticated: yes
+    state: latest
+
+- name: Install Gateway Config
+  template:
+    src: "{{ unifi_server_config_gateway_json }}"
+    dest: /usr/lib/unifi/data/sites/default/config.gateway.json
+    mode: 0600
+    owner: unifi
+  when: unifi_server_config_gateway_json is defined

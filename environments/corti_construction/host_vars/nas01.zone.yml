@@ -1,0 +1,12 @@
+---
+zone_uuid: 4118f07f-1351-e569-dcaf-9d255e5a95d4
+zfs_filesystems_present:
+  - name: "zones/{{ zone_uuid }}/data/media"
+    state: present
+    casesensitivity: insensitive
+    quota: none
+    mountpoint: /project_management
+
+smb_shares_present:
+  - name: project_management
+    path: /project_management

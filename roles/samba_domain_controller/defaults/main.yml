@@ -1,0 +1,5 @@
+---
+samba_domain_controller_kerberos_realm: "{{ network_kerberos_realm|default('DEFAULT_REALM') }}"
+samba_domain_controller_domain_name: "{{ domain_name|default('DEFAULT_DOMAIN') }}"
+samba_domain_controller_dns_forwarder: "{{ network_dns_forwarders|default('8.8.8.8') }}"
+samba_domain_controller_admin_password: "DomainControllerPassword01!"

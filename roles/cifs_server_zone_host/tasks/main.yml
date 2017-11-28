@@ -14,7 +14,7 @@
 #        indestructible_delegated: true
 #        limit_priv: "default,sys_smb"
     nics:
-      - nic_tag: external
+      - nic_tag: "{{ cifs_server_zone_nic_tag }}"
         ip: "{{ cifs_server_zone_ip }}"
         netmask: "{{ cifs_server_zone_netmask }}"
         gateway: "{{ cifs_server_zone_gateway }}"

@@ -6,7 +6,8 @@ network_dns_resolvers:
   - 8.8.8.8
   - 8.8.4.4
 
-kerberos_realm: COOLPEOPLE.US
+network_kerberos_realm: COOLPEOPLE.US
+network_kerberos_kdc: "{{ hostvars['sambadc01']['ansible_host'] }}"
 domain_name: COOLPEOPLE
 domain_groups: 
   - Users

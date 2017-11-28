@@ -1,0 +1,27 @@
+[libdefaults]
+   default_realm = {{ cifs_server_kerberos_realm|upper }}
+
+[realms]
+   {{ cifs_server_kerberos_realm|upper }} = {
+       kdc = {{ cifs_server_kerberos_kdc }}
+       admin_server = {{ cifs_server_kerberos_kdc }}
+       kpasswd_server = {{ cifs_server_kerberos_kdc }}
+       kpasswd_protocol = SET_CHANGE
+   }
+
+[domain_realm]
+   .{{ cifs_server_kerberos_realm|lower }} = {{ cifs_server_kerberos_realm|upper }}
+
+[logging]
+    default = FILE:/var/krb5/kdc.log
+    kdc = FILE:/var/krb5/kdc.log
+    kdc_rotate = {
+    period = 1d
+    version = 10
+    }
+
+[appdefaults]
+    kinit = {
+    renewable = true
+    forwardable= true
+    }

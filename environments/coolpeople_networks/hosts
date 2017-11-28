@@ -2,8 +2,9 @@
 # Coolpeople Networks
 #
 [nodes]
-node01 ansible_host=10.99.50.1 ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
-storage00 ansible_host=10.99.50.10 ansible_user=root
+unifipi     ansible_host=10.0.0.10 ansible_user=root
+node01      ansible_host=10.99.50.1 ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
+storage00   ansible_host=10.99.50.10 ansible_user=root
 
 [samba_domain_controller_zone_hosts]
 node01
@@ -29,6 +30,9 @@ rabbitmq_servers
 samba_domain_controllers
 storage_servers
 plex_servers
+
+[unifi_servers]
+unifipi
 
 [redis_datastores]
 redis01.zone    ansible_host=10.0.9.1   ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based

@@ -1,0 +1,2 @@
+---
+unifi_server_config_gateway_json: environments/coolpeople_networks/templates/config.gateway.json

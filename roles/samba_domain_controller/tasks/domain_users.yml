@@ -1,0 +1,12 @@
+---
+- block:
+  - name: domain_users | generate list of users
+    command: "samba-tool user list"
+    register: _domain_users
+    changed_when: false
+
+  - name: domain_users | creating domain users
+    command: "samba-tool user add {{ item['name'] }} '{{ item['password'] }}'"
+    with_items: '{{ samba_domain_controller_users }}'
+    when: item['name'] not in _domain_users['stdout']
+  when: samba_domain_controller_users is defined
