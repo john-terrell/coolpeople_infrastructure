@@ -1,0 +1,2 @@
+---
+unifi_server_config_gateway_json: environments/corti_construction/templates/config.gateway.json

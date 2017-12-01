@@ -1,0 +1,12 @@
+---
+sensu_server_zone_alias: "sensu"
+sensu_server_zone_image_uuid: "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
+sensu_server_zone_brand: "lx"
+sensu_server_zone_kernel_version: 4.2
+sensu_server_zone_cpu_cap: 100
+sensu_server_zone_memory_size: 2048
+sensu_server_zone_quota_in_gb: 80
+sensu_server_zone_ip: 192.168.10.15
+sensu_server_zone_netmask: "{{ network_netmask | default('255.255.255.0') }}"
+sensu_server_zone_gateway: "{{ network_gateway | default('192.168.10.1') }}"
+sensu_server_zone_dns_resolvers: "{{ network_dns_resolvers }}"

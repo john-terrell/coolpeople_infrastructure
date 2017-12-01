@@ -6,6 +6,7 @@
   vmadm:
     state: present
     brand: "{{ rabbitmq_server_zone_brand | default('joyent') }}"
+    kernel_version: "{{ rabbitmq_server_zone_kernel_version | default(omit) }}"
     alias: "{{ rabbitmq_server_zone_alias }}"
     uuid: "{{ rabbitmq_server_zone_uuid | default(omit) }}"
     image_uuid: "{{ rabbitmq_server_zone_image_uuid }}"

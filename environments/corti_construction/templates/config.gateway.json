@@ -1,0 +1,26 @@
+{
+    "system":{
+       "static-host-mapping":{
+          "host-name":{
+              "cortinas.corti.lan":{
+                "alias":[
+                   "nas.corti.lan",
+                   "files.corti.lan"
+                ],
+                "inet":[
+                   "172.16.0.50"
+                ]
+             },
+             "unifi.corti.lan":{
+                "alias":[
+                   "unifi"
+                ],
+                "inet":[
+                   "172.16.0.10"
+                ]
+             }
+          }
+       }
+    }
+ }
+ 

@@ -69,33 +69,39 @@
 - hosts: cifs_server_zone_hosts
   roles:
     - role: cifs_server_zone_host
-      cifs_server_zone_alias: nas01
+      cifs_server_zone_alias: cifs
       cifs_server_zone_uuid: "{{ hostvars['nas01.zone']['zone_uuid']|default(omit) }}"
       cifs_server_zone_ip: "{{ hostvars['nas01.zone']['ansible_host'] }}"  
 
 - hosts: plex_server_zone_hosts
   roles:
     - role: plex_server_zone_host
-      plex_server_zone_alias: plex01
+      plex_server_zone_alias: plex
       plex_server_zone_ip: "{{ hostvars['plex01.zone']['ansible_host']}}"
 
 - hosts: rabbitmq_server_zone_hosts
   roles:
     - role: rabbitmq_server_zone_host
-      rabbitmq_server_zone_alias: rabbitma01
+      rabbitmq_server_zone_alias: rabbitma
       rabbitmq_server_zone_ip: "{{ hostvars['rabbitmq01.zone']['ansible_host']}}"
 
 - hosts: redis_datastore_zone_hosts
   roles:
     - role: redis_datastore_zone_host
-      redis_datastore_zone_alias: redis01
+      redis_datastore_zone_alias: redis
       redis_datastore_zone_ip: "{{ hostvars['redis01.zone']['ansible_host']}}"
 
 - hosts: samba_domain_controller_zone_hosts
   roles:
     - role: samba_domain_controller_zone_host
-      samba_domain_controller_zone_alias: sambadc01
+      samba_domain_controller_zone_alias: sambadc
       samba_domain_controller_zone_ip: "{{ hostvars['sambadc01.zone']['ansible_host']}}"
+
+- hosts: sensu_server_zone_hosts
+  roles:
+    - role: sensu_server_zone_host
+      sensu_server_zone_alias: sensu
+      sensu_server_zone_ip: "{{ hostvars['sensu01.zone']['ansible_host']}}"
 
 ## Redis Datastores
 - hosts: redis_datastores
@@ -127,3 +133,8 @@
 - hosts: unifi_servers
   roles:
     - unifi_server
+
+## Sensu Servers
+- hosts: sensu_servers
+  roles:
+    - sensu_server

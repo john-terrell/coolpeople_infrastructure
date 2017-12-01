@@ -1,6 +1,9 @@
 #
 # Coolpeople Networks
 #
+[ios_devices]
+sg300-10    ansible_host=10.99.4.1 ansible_user=root
+
 [nodes]
 unifipi     ansible_host=10.0.0.10 ansible_user=root
 node01      ansible_host=10.99.50.1 ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
@@ -10,9 +13,6 @@ storage00   ansible_host=10.99.50.10 ansible_user=root
 node01
 
 [plex_server_zone_hosts]
-node01
-
-[cifs_server_zone_hosts]
 node01
 
 [redis_datastore_zone_hosts]
@@ -28,7 +28,7 @@ node01
 redis_datastores
 rabbitmq_servers
 samba_domain_controllers
-storage_servers
+#storage_servers
 plex_servers
 
 [unifi_servers]
@@ -43,8 +43,8 @@ rabbitmq01.zone ansible_host=10.0.9.2   ansible_user=root ansible_python_interpr
 [samba_domain_controllers]
 sambadc01.zone  ansible_host=10.0.9.10  ansible_user=root ansible_python_interpreter=/usr/bin/python3
 
-[storage_servers]
-nas01.zone      ansible_host=10.0.9.20  ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+#[storage_servers]
+#nas01.zone      ansible_host=10.0.9.20  ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
 
 [plex_servers]
-plex01.zone     ansible_host=10.0.9.30  ansible_user=root
+plex01.zone     ansible_host=10.0.9.30  ansible_user=root # Ubuntu based

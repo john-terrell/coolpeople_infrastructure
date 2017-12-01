@@ -6,8 +6,13 @@ network_dns_resolvers:
   - 8.8.8.8
   - 8.8.4.4
 
+# Force RabbitMQ to be a LX zone.
+#rabbitmq_server_zone_brand: "lx"
+#rabbitmq_server_zone_kernel_version: 4.2
+#rabbitmq_server_zone_image_uuid: "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
+
 network_kerberos_realm: COOLPEOPLE.US
-network_kerberos_kdc: "{{ hostvars['sambadc01']['ansible_host'] }}"
+network_kerberos_kdc: "{{ hostvars['sambadc01.zone']['ansible_host'] }}"
 domain_name: COOLPEOPLE
 domain_groups: 
   - Users
