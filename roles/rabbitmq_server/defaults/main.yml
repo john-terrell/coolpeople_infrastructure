@@ -1,0 +1,3 @@
+---
+rabbitmq_erlang_cookie: "8D727A4C-EF4B-4B79-830A-6BFB48C7FA2C"
+rabbitmq_home_dir: "/var/db/rabbitmq"

@@ -5,9 +5,16 @@
 sg300-10    ansible_host=10.99.4.1 ansible_user=root
 
 [nodes]
-unifipi     ansible_host=10.0.0.10 ansible_user=root
-node01      ansible_host=10.99.50.1 ansible_user=root ansible_python_interpreter="/opt/local/bin/python"
-storage00   ansible_host=10.99.50.10 ansible_user=root
+unifipi         ansible_host=10.0.0.10      ansible_user=root
+node01          ansible_host=10.99.50.1     ansible_user=root   ansible_python_interpreter="/opt/local/bin/python"
+storage00       ansible_host=10.99.50.10    ansible_user=root
+
+[zones]
+redis01.zone    ansible_host=10.0.9.1       ansible_user=root   ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+rabbitmq01.zone ansible_host=10.0.9.2       ansible_user=root   ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+sambadc01.zone  ansible_host=10.0.9.10      ansible_user=root   ansible_python_interpreter=/usr/bin/python3
+plex01.zone     ansible_host=10.0.9.30      ansible_user=root # Ubuntu based
+#nas01.zone     ansible_host=10.0.9.20      ansible_user=root   ansible_python_interpreter=/opt/local/bin/python # Illumos Based
 
 [samba_domain_controller_zone_hosts]
 node01
@@ -24,27 +31,26 @@ node01
 [samba_domain_controller_zone_hosts]
 node01
 
-[zones:children]
-redis_datastores
-rabbitmq_servers
-samba_domain_controllers
-#storage_servers
-plex_servers
-
 [unifi_servers]
 unifipi
 
 [redis_datastores]
-redis01.zone    ansible_host=10.0.9.1   ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+redis01.zone
 
 [rabbitmq_servers]
-rabbitmq01.zone ansible_host=10.0.9.2   ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+rabbitmq01.zone
 
 [samba_domain_controllers]
-sambadc01.zone  ansible_host=10.0.9.10  ansible_user=root ansible_python_interpreter=/usr/bin/python3
+sambadc01.zone
 
 #[storage_servers]
-#nas01.zone      ansible_host=10.0.9.20  ansible_user=root ansible_python_interpreter=/opt/local/bin/python # Illumos Based
+#nas01.zone
 
 [plex_servers]
-plex01.zone     ansible_host=10.0.9.30  ansible_user=root # Ubuntu based
+plex01.zone
+
+#
+# Sensu Support
+#
+[rabbitmq_sensu_vhosts]
+rabbitmq01.zone

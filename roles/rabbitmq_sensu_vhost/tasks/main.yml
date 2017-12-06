@@ -1,0 +1,27 @@
+---
+- name: Query RabbitMQ User List
+  command: rabbitmqctl list_users -q
+  register: rabbitmq_user_list
+  changed_when: false
+
+- name: Ensure RabbitMQ Sensu Users Exists
+  command: "rabbitmqctl add_user sensu {{ sensu_rabbitmq_password }}"
+  when: rabbitmq_user_list.stdout.find("sensu") == -1
+
+- name: Query RabbitMQ Virtual Host List
+  command: rabbitmqctl list_vhosts -q
+  register: rabbitmq_vhost_list
+  changed_when: false
+
+- name: Ensure RabbitMQ Sensu Virtual Host Exists
+  command: rabbitmqctl add_vhost /sensu
+  when: rabbitmq_vhost_list.stdout.find("/sensu") == -1
+
+- name: Query RabbitMQ Sensu Virtual Host Permissions
+  command: rabbitmqctl list_permissions -p /sensu
+  register: rabbitmq_vhost_permissions
+  changed_when: false
+
+- name: Ensure RabbitMQ Sensu Virtual Host Permissions
+  command: rabbitmqctl set_permissions -p /sensu sensu ".*" ".*" ".*"
+  when: rabbitmq_vhost_permissions.stdout.find("sensu   .*      .*      .*") != -1

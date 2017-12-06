@@ -2,6 +2,12 @@
 ##########################
 # Global variables are defined in group_vars/all.yml
 ##########################
+- hosts: nodes zones
+  tasks:
+    - name: Ensure htop is present
+      package: name=htop state=present
+      when: ansible_distribution != "OmniOS"
+
 - hosts: nodes
   tasks:
     # SmartOS
@@ -138,3 +144,7 @@
 - hosts: sensu_servers
   roles:
     - sensu_server
+
+- hosts: rabbitmq_sensu_vhosts
+  roles:
+    - rabbitmq_sensu_vhost

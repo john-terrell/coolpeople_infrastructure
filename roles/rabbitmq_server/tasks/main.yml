@@ -6,11 +6,28 @@
   - name: Ensure RabbitMQ is started (SmartOS)
     service: name=rabbitmq state=started enabled=yes
     become: true
-  - name: Ensure htop is present (SmartOS)
-    pkgin: name=htop state=present
+  - name: Ensure RabbitMQ Environment file
+    template:
+      src: rabbitmq-env.conf.j2
+      dest: /opt/local/etc/rabbitmq/rabbitmq-env.conf
+      owner: root
+      group: root
+      mode: 0644
+    become: true
+    notify: restart rabbitmq
+  - name: Ensure RabbitMQ Erlang cookie file
+    template:
+      src: dot_erlang_cookie.j2
+      dest: /var/db/rabbitmq/.erlang.cookie
+      owner: rabbitmq
+      group: rabbitmq
+      mode: 0400
+    become: true
+    notify: restart rabbitmq
   when: ansible_distribution == "SmartOS"
 
 # Debian
+# NOTE: This is missing some of the steps used above for SmartOS - FIX!
 - block:
   - name: Ensure RabbitMQ is present (Debian)
     package: name=rabbitmq-server state=present
