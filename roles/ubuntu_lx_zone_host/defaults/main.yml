@@ -1,0 +1,11 @@
+---
+ubuntu_lx_zone_alias: "ubuntu_lx_zone_host"
+ubuntu_lx_zone_image_uuid: "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
+ubuntu_lx_zone_kernel_version: 4.2
+ubuntu_lx_zone_cpu_cap: 100
+ubuntu_lx_zone_memory_size: 2048
+ubuntu_lx_zone_quota_in_gb: 80
+ubuntu_lx_zone_ip: 192.168.10.11
+ubuntu_lx_zone_netmask: "{{ network_netmask | default('255.255.255.0') }}"
+ubuntu_lx_zone_gateway: "{{ network_gateway | default('192.168.10.1') }}"
+ubuntu_lx_zone_dns_resolvers: "{{ network_dns_resolvers }}"

@@ -1,0 +1,47 @@
+---
+- name: Ensure Supervisor Installed
+  apt: name=supervisor state=latest
+
+- name: Ensure Unzip Installed
+  apt: name=unzip state=latest
+
+#- name: Ensure /opt/ Exists
+#  file: path=/opt state=directory mode=0755
+
+- name: Ensure /etc/consul Exists
+  file: path=/etc/consul state=directory mode=755
+
+- name: Ensure /var/log/consul Exists
+  file: path=/var/log/consul state=directory mode=755
+
+- name: Ensure /var/consul Exists
+  file: path=/var/consul state=directory mode=755
+
+- name: See if the consul binary already exists
+  stat: path=/usr/local/bin/consul
+  register: consul_stat
+
+- name: Ensure Consul Unarchived
+  unarchive:
+    src: https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+  when: consul_stat.stat.exists == False
+
+- name: Create supervise configuration for Consul
+  template: src=supervisor.j2 dest=/etc/supervisor/conf.d/consul.conf
+  notify: Restart Consul
+
+- meta: flush_handlers
+  
+- block:
+  - name: Retrieve Cluster Member list
+    command: consul members
+    register: consul_members
+    changed_when: false
+
+  - name: Ensure Cluster Joined
+    command: "/usr/local/bin/consul join {{ consul_server_leader_ip_address }}" 
+    when: "consul_server_leader_ip_address not in consul_members.stdout"
+
+  when: "hostvars[inventory_hostname]['ansible_default_ipv4']['address'] != consul_server_leader_ip_address"

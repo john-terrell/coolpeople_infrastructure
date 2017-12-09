@@ -1,0 +1,10 @@
+---
+ubuntu_kvm_zone_alias: "sambadc"
+ubuntu_kvm_zone_image_uuid: "342045ce-6af1-4adf-9ef1-e5bfaf9de28c"
+ubuntu_kvm_zone_vcpus: 1
+ubuntu_kvm_zone_ram: 2048
+ubuntu_kvm_zone_quota_in_gb: 80
+ubuntu_kvm_zone_ip: 192.168.10.15
+ubuntu_kvm_zone_netmask: "{{ network_netmask | default('255.255.255.0') }}"
+ubuntu_kvm_zone_gateway: "{{ network_gateway | default('192.168.10.1') }}"
+ubuntu_kvm_zone_dns_resolvers: "{{ network_dns_resolvers }}"

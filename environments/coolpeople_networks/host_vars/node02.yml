@@ -1,0 +1,12 @@
+---
+consul_server_zone_alias: consul02
+consul_server_zone_ip: "{{ hostvars['consul02.zone']['ansible_host']}}"
+
+redis_datastore_zone_alias: redis02
+redis_datastore_zone_ip: "{{ hostvars['redis02.zone']['ansible_host']}}"
+
+rabbitmq_server_zone_alias: rabbitmq02
+rabbitmq_server_zone_ip: "{{ hostvars['rabbitmq02.zone']['ansible_host']}}"
+
+influxdb_server_zone_alias: influxdb02
+influxdb_server_zone_ip: "{{ hostvars['influxdb02.zone']['ansible_host']}}"

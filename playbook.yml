@@ -74,52 +74,43 @@
 
 - hosts: cifs_server_zone_hosts
   roles:
-    - role: cifs_server_zone_host
-      cifs_server_zone_alias: cifs
-      cifs_server_zone_uuid: "{{ hostvars['nas01.zone']['zone_uuid']|default(omit) }}"
-      cifs_server_zone_ip: "{{ hostvars['nas01.zone']['ansible_host'] }}"  
-
-- hosts: plex_server_zone_hosts
-  roles:
-    - role: plex_server_zone_host
-      plex_server_zone_alias: plex
-      plex_server_zone_ip: "{{ hostvars['plex01.zone']['ansible_host']}}"
-
-- hosts: rabbitmq_server_zone_hosts
-  roles:
-    - role: rabbitmq_server_zone_host
-      rabbitmq_server_zone_alias: rabbitma
-      rabbitmq_server_zone_ip: "{{ hostvars['rabbitmq01.zone']['ansible_host']}}"
-
-- hosts: redis_datastore_zone_hosts
-  roles:
-    - role: redis_datastore_zone_host
-      redis_datastore_zone_alias: redis
-      redis_datastore_zone_ip: "{{ hostvars['redis01.zone']['ansible_host']}}"
-
-- hosts: samba_domain_controller_zone_hosts
-  roles:
-    - role: samba_domain_controller_zone_host
-      samba_domain_controller_zone_alias: sambadc
-      samba_domain_controller_zone_ip: "{{ hostvars['sambadc01.zone']['ansible_host']}}"
-
-- hosts: sensu_server_zone_hosts
-  roles:
-    - role: sensu_server_zone_host
-      sensu_server_zone_alias: sensu
-      sensu_server_zone_ip: "{{ hostvars['sensu01.zone']['ansible_host']}}"
+    - role: illumos_zone_host
+      illumos_zone_purpose: CIFS Server
+      illumos_zone_alias: "{{ cifs_server_zone_alias }}"
+      illumos_zone_ip: "{{ cifs_server_zone_ip }}"
 
 ## Redis Datastores
+- hosts: redis_datastore_zone_hosts
+  roles:
+    - role: illumos_zone_host
+      illumos_zone_purpose: Redis Datastore
+      illumos_zone_alias: "{{ redis_datastore_zone_alias }}"
+      illumos_zone_ip: "{{ redis_datastore_zone_ip }}"
+
 - hosts: redis_datastores
   roles:
     - role: redis_datastore
 
 ## RabbitMQ Servers
+- hosts: rabbitmq_server_zone_hosts
+  roles:
+    - role: illumos_zone_host
+      illumos_zone_purpose: RabbitMQ Server
+      illumos_zone_alias: "{{ rabbitmq_server_zone_alias }}"
+      illumos_zone_ip: "{{ rabbitmq_server_zone_ip }}"
+
 - hosts: rabbitmq_servers
   roles:
     - role: rabbitmq_server
 
 ## Samba4 Domain Controllers
+- hosts: samba_domain_controller_zone_hosts
+  roles:
+    - role: ubuntu_kvm_zone_host
+      ubuntu_kvm_zone_purpose: Samba Domain Controller
+      ubuntu_kvm_zone_alias: "{{ samba_domain_controller_zone_alias }}"
+      ubuntu_kvm_zone_ip: "{{ samba_domain_controller_zone_ip }}"
+
 - hosts: samba_domain_controllers
   roles:
     - role: samba_domain_controller
@@ -131,6 +122,13 @@
     - ansible-resolv
 
 ## Plex Media Servers
+- hosts: plex_server_zone_hosts
+  roles:
+    - role: ubuntu_lx_zone_host
+      ubuntu_lx_zone_purpose: Plex Media Server
+      ubuntu_lx_zone_alias: "{{ plex_server_zone_alias }}"
+      ubuntu_lx_zone_ip: "{{ plex_server_zone_ip }}"
+
 - hosts: plex_servers
   roles:
     - plex_server
@@ -141,6 +139,13 @@
     - unifi_server
 
 ## Sensu Servers
+- hosts: sensu_server_zone_hosts
+  roles:
+    - role: ubuntu_lx_zone_host
+      ubuntu_lx_zone_purpose: Sensu Server
+      ubuntu_lx_zone_alias: "{{ sensu_server_zone_alias }}"
+      ubuntu_lx_zone_ip: "{{ sensu_server_zone_ip }}"
+
 - hosts: sensu_servers
   roles:
     - sensu_server
@@ -148,3 +153,30 @@
 - hosts: rabbitmq_sensu_vhosts
   roles:
     - rabbitmq_sensu_vhost
+
+## InfluxDB Servers
+- hosts: influxdb_server_zone_hosts
+  roles:
+    - role: ubuntu_lx_zone_host
+      ubuntu_lx_zone_purpose: InfluxDB Server
+      ubuntu_lx_zone_alias: "{{ influxdb_server_zone_alias }}"
+      ubuntu_lx_zone_ip: "{{ influxdb_server_zone_ip }}"
+
+- hosts: influxdb_servers
+  roles:
+    - influxdb_server
+
+## Consul Servers
+- hosts: consul_server_zone_hosts
+  roles:
+    - role: ubuntu_lx_zone_host
+      ubuntu_lx_zone_purpose: Consul Server
+      ubuntu_lx_zone_alias: "{{ consul_server_zone_alias }}"
+      ubuntu_lx_zone_ip: "{{ consul_server_zone_ip }}"
+
+- hosts: consul_servers
+  roles:
+    - role: consul_server
+      consul_server_leader_ip_address: "{{ hostvars[groups['consul_servers'][0]]['ansible_host']}}"
+      consul_server_bootstrap_expect: "{{ groups['consul_servers'] | length }}"
+  

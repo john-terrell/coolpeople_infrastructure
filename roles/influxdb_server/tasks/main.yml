@@ -1,0 +1,14 @@
+---
+- name: Update APT
+  apt: update_cache=yes cache_valid_time=3600
+  changed_when: false
+
+- name: Ensure InfluxDB Installed
+  apt:
+    name: influxdb
+    state: present
+
+- name: Ensure InfluxDB Service Installed
+  service:
+    name: influxd
+    state: started

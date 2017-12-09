@@ -1,0 +1,12 @@
+[program:consul]
+command = /usr/local/bin/consul agent -ui -server -config-dir /etc/consul -data-dir /var/consul -bootstrap-expect={{consul_server_bootstrap_expect}}
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/consul/out
+stdout_logfile_maxbytes=1MB
+stdout_logfile_backups=10
+stdout_capture_maxbytes=1MB
+stderr_logfile=/var/log/consul/err
+stderr_logfile_maxbytes=1MB
+stderr_logfile_backups=10
+stderr_capture_maxbytes=1MB
