@@ -1,5 +1,5 @@
 [program:consul]
-command = /usr/local/bin/consul agent -ui -server -config-dir /etc/consul -data-dir /var/consul -bootstrap-expect={{consul_server_bootstrap_expect}}
+command = /usr/local/bin/consul agent -node={{inventory_hostname}} -dns-port=53 -recursor={{ network_dns_resolvers[0] }} -client=0.0.0.0 -ui -server -config-dir /etc/consul -data-dir /var/consul -bootstrap-expect={{consul_server_bootstrap_expect}}
 autostart=true
 autorestart=true
 stdout_logfile=/var/log/consul/out
