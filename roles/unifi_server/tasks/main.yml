@@ -20,7 +20,7 @@
     state: latest
 
 - name: Install Gateway Config
-  template:
+  copy:
     src: "{{ unifi_server_config_gateway_json }}"
     dest: /usr/lib/unifi/data/sites/default/config.gateway.json
     mode: 0600
