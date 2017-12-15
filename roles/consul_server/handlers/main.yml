@@ -1,3 +1,0 @@
----
-- name: Restart Consul
-  supervisorctl: name=consul state=restarted

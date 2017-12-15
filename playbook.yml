@@ -122,16 +122,51 @@
     - ansible-resolv
 
 ## Plex Media Servers
-- hosts: plex_server_zone_hosts
+- hosts: plex_media_server_zone_hosts
   roles:
     - role: ubuntu_lx_zone_host
       ubuntu_lx_zone_purpose: Plex Media Server
-      ubuntu_lx_zone_alias: "{{ plex_server_zone_alias }}"
-      ubuntu_lx_zone_ip: "{{ plex_server_zone_ip }}"
+      ubuntu_lx_zone_alias: "{{ plex_media_server_zone_alias }}"
+      ubuntu_lx_zone_ip: "{{ plex_media_server_zone_ip }}"
+      ubuntu_lx_zone_cpu_cap: 200
 
-- hosts: plex_servers
+- hosts: plex_media_servers
   roles:
-    - plex_server
+    - plex_media_server
+
+  pre_tasks:
+    # Make sure AutoFS is installed and NFS directories are linked.
+    - name: Update APT
+      apt: update_cache=yes cache_valid_time=3600
+      changed_when: false
+
+    - name: Install Autofs
+      package: name=autofs state=installed
+
+    - name: Ensure auto.master has /net enabled
+      lineinfile:
+        path: /etc/auto.master
+        regexp: '^#/net'
+        line: "/net\t-hosts -fstype=nfs,rw,vers=3"
+        state: present
+      notify: Restart AutoFS
+
+  handlers:
+    - name: Restart AutoFS
+      service: name=autofs state=restarted
+
+#    - name: Ensure /var/lib/plexmediaserver is linked to AutoFS
+#      file:
+#        src: /net/10.0.50.10/tank/plexmediaserver
+#        dest: /var/lib/plexmediaserver
+#        state: link
+
+    - name: Ensure /mnt/media is linked to AutoFS
+      file:
+        src: /net/10.0.50.10/tank/media
+        dest: /mnt/media
+        state: link
+
 
 ## Unifi Servers
 - hosts: unifi_servers
@@ -177,6 +212,5 @@
 - hosts: consul_servers
   roles:
     - role: consul_server
-      consul_server_leader_ip_address: "{{ hostvars[groups['consul_servers'][0]]['ansible_host']}}"
       consul_server_bootstrap_expect: "{{ groups['consul_servers'] | length }}"
   

@@ -70,6 +70,15 @@ influxdb02.zone
 #
 # Plex Media Server
 #
+[plex_media_server_zone_hosts]
+node01
+
+[plex_media_servers]
+plex01.zone
+
+#
+# Samba Domain Controller
+#
 [samba_domain_controller_zone_hosts]
 node01
 

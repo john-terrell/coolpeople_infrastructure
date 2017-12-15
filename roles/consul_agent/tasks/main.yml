@@ -1,0 +1,84 @@
+---
+- block:
+    - name: Ensure Supervisor Installed
+      apt: name=supervisor state=latest
+
+    - name: Ensure Unzip Installed
+      apt: name=unzip state=latest
+
+    - name: Ensure /etc/consul Exists
+      file: path=/etc/consul state=directory mode=755
+
+    - name: Ensure /var/log/consul Exists
+      file: path=/var/log/consul state=directory mode=755
+
+    - name: Ensure /var/consul Exists
+      file: path=/var/consul state=directory mode=755
+
+    - name: See if the consul binary already exists
+      stat: path=/usr/local/bin/consul
+      register: consul_stat
+
+    - name: Ensure Consul Unarchived
+      unarchive:
+        src: https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+      when: consul_stat.stat.exists == False
+
+    - name: Create supervise configuration for Consul Agent
+      template: src=supervisor.j2 dest=/etc/supervisor/conf.d/consul.conf
+      notify: Restart Consul
+      when: consul_agent_is_server == false
+  when: ansible_os_family == "Debian"
+
+- block:
+    - name: Ensure Consul Installed
+      package: name=consul state=present
+
+    - name: Ensure Consul SMF Facility Installed
+      command: svcs consul
+      register: svcs_consul
+      failed_when: False
+
+    - name: Create SMF configuration for Consul Agent
+      template: src=smf.xml.j2 dest=/opt/consul_smf.xml
+
+    - name: Ensure /opt/local/etc/consul.d/ Exists
+      file: path=/opt/local/etc/consul.d/ state=directory mode=755
+
+    - name: Ensure /var/consul Exists
+      file: path=/var/consul state=directory mode=755
+
+    - name: Ensure SMF configuration imported
+      command: svccfg import /opt/consul_smf.xml
+      when: '"consul" not in svcs_consul.stdout'
+
+    - name: Ensure Consul Service is Enabled
+      service: name=consul state=started
+
+    - name: Ensure easy-install linked
+      file: src=/opt/local/bin/easy_install-2.7 dest=/opt/local/bin/easy_install state=link
+  when: ansible_distribution == "SmartOS"
+
+- block:
+  - name: Retrieve Cluster Member list
+    command: consul members
+    register: consul_members
+    changed_when: false
+
+  - name: Ensure Cluster Joined
+    command: "
+    consul join {{ consul_server_leader_ip_address }}" 
+    when: "consul_server_leader_ip_address not in consul_members.stdout"
+
+  - name: Ensure pip Installed
+    easy_install:
+      name: pip
+      state: latest
+
+  - name: Ensure python-consul Installed
+    pip:
+      name: python-consul
+
+  when: consul_agent_is_server == false

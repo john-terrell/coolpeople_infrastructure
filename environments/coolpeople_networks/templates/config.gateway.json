@@ -7,7 +7,15 @@
          "nat-pmp": "enable",
          "secure-mode": "enable",
          "wan": "eth0"
-      }
+      },
+      "dns": {
+        "forwarding": {
+           "options": [
+              "server=/service.consul/10.0.7.1",
+              "server=/7.0.10.in-addr.arpa/10.0.7.1"
+           ]
+        }
+     }
    },
    "system":{
       "static-host-mapping":{
@@ -58,22 +66,22 @@
                   "10.99.50.1"
                ]
             },
-            "storage00.internal.coolpeople.us":{
+            "node02.internal.coolpeople.us":{
+              "alias":[
+                 "dellr515.internal.coolpeople.us",
+                 "smartos02.internal.coolpeople.us"
+              ],
+              "inet":[
+                 "10.99.50.2"
+              ]
+           },
+           "storage00.internal.coolpeople.us":{
                "alias":[
                   "dellr320.internal.coolpeople.us",
                   "omnios00.internal.coolpeople.us"
                ],
                "inet":[
                   "10.99.50.10"
-               ]
-            },
-            "node02.internal.coolpeople.us":{
-               "alias":[
-                  "dellr515.internal.coolpeople.us",
-                  "smartos02.internal.coolpeople.us"
-               ],
-               "inet":[
-                  "10.99.50.50"
                ]
             }
          }

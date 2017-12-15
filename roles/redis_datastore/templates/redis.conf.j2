@@ -439,7 +439,7 @@ slave-priority 100
 #
 # Please check http://redis.io/topics/persistence for more information.
 
-appendonly no
+appendonly yes
 
 # The name of the append only file (default: "appendonly.aof")
 
@@ -707,3 +707,7 @@ hz 10
 # in order to commit the file to the disk more incrementally and avoid
 # big latency spikes.
 aof-rewrite-incremental-fsync yes
+
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000

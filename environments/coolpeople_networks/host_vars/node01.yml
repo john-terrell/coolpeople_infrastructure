@@ -11,8 +11,8 @@ rabbitmq_server_zone_ip: "{{ hostvars['rabbitmq01.zone']['ansible_host']}}"
 influxdb_server_zone_alias: influxdb01
 influxdb_server_zone_ip: "{{ hostvars['influxdb01.zone']['ansible_host']}}"
 
-plex_server_zone_alias: plex01
-plex_server_zone_ip: "{{ hostvars['plex01.zone']['ansible_host']}}"
+plex_media_server_zone_alias: plex01
+plex_media_server_zone_ip: "{{ hostvars['plex01.zone']['ansible_host']}}"
 
 samba_domain_controller_zone_alias: sambadc01
 samba_domain_controller_zone_ip: "{{ hostvars['sambadc01.zone']['ansible_host']}}"

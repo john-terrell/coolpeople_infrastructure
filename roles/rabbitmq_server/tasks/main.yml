@@ -37,3 +37,10 @@
   - name: Ensure htop is present (Debian)
     package: name=htop state=present
   when: ansible_os_family == "Debian"
+
+- name: Register RabbitMQ with Consul
+  consul:
+    service_name: rabbitmq
+    service_port: 8500
+    interval: 60s
+    http: http://localhost:8500/ui

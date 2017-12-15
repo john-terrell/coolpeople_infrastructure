@@ -26,3 +26,15 @@
     mode: 0600
     owner: unifi
   when: unifi_server_config_gateway_json is defined
+
+- name: Ensure Node.js is present
+  package: name=nodejs state=present
+
+- name: Ensure node is symlinked to nodejs
+  file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
+
+- name: Ensure npm is present
+  package: name=npm state=present
+
+- name: Ensure json tool is present
+  npm: name=json global=yes state=present
